@@ -20,6 +20,12 @@ st.write("This app allows you to perform a preliminary analysis of categorical v
           " corresponding test results. This analysis is useful for exploring the relationships between pairs of variables, but additional analysis may be required"
           " to fully understand the relationships between the variables.")
 
+
+st.write("When you use this app to upload your CSV file, the data from the file will be temporarily stored on the server for the duration of your session. "
+         "Once you close the app or the server is restarted, the data will be deleted and will no longer be stored on the server. "
+         "It's important to keep in mind that if you are using a public cloud platform, some data may be stored temporarily and not automatically deleted. "
+         "To ensure the privacy and security of your data, we recommend using a private cloud or on-premise infrastructure and following relevant privacy regulations.")
+
 file = st.file_uploader("Upload a CSV file")
 if file is not None:
     data = pd.read_csv(file)
