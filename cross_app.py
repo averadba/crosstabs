@@ -33,9 +33,6 @@ if file is not None:
     for i, col1 in enumerate(selected_cols):
         for col2 in selected_cols[i+1:]:
             crosstab = pd.crosstab(data[col1], data[col2])
-            exp_freq = chi2_contingency(crosstab)[3]
-            st.write(f"Cross-tabulation of {col1} and {col2}")
-            st.write(pd.concat([crosstab, pd.DataFrame(exp_freq, index=crosstab.index, columns=crosstab.columns, prefix='Expected_')], axis=1))
             tabs_list.append((col1, col2))
             st.write(f"<a id='{col1}{col2}'></a>", unsafe_allow_html=True)
             st.write(f"Cross-tabulation of {col1} and {col2}")
