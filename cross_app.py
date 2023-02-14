@@ -42,7 +42,8 @@ if file is not None:
                 oddsratio, pval = fisher_exact(crosstab)
                 st.write(f"Fisher's exact test statistic: {oddsratio}, p-value: {pval}")
             elif np.any(exp_freq < 5):
-                st.write("Warning: chi-square test may be invalid due to expected frequency less than 5")
+                st.markdown("<span style='color: red;'>Warning:</span> chi-square test may be invalid due to expected frequency less than 5")
+                st.write(f"Chi-square test statistic: {chi2}, p-value: {pval}")
             else:
                 st.write(f"Chi-square test statistic: {chi2}, p-value: {pval}")
 
