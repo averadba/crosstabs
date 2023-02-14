@@ -49,7 +49,7 @@ if file is not None:
                     significant_tabs.append((col1, col2))
 
     # Display cross-tabs and significant cross-tabs in the sidebar
-    tabs_container = st.sidebar.beta_container()
+    tabs_container = st.sidebar.container()
     tabs_container.write("## Cross-tabs")
     with tabs_container:
         tabs_list_elem = []
