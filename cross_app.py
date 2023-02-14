@@ -27,25 +27,28 @@ if file is not None:
         if not pd.api.types.is_categorical_dtype(data[col]):
             data[col] = data[col].astype("category")
 
-    # Perform pairwise cross-tabulations and display results
-    st.header("Cross-tabulations")
-    tabs_list = []
-    for i, col1 in enumerate(selected_cols):
-        for col2 in selected_cols[i+1:]:
-            crosstab = pd.crosstab(data[col1], data[col2])
-            tabs_list.append((col1, col2))
-            st.write(f"<a id='{col1}{col2}'></a>", unsafe_allow_html=True)
-            st.write(f"Cross-tabulation of {col1} and {col2}")
-            st.write(crosstab)
-            chi2, pval, dof, exp_freq = chi2_contingency(crosstab)
-            if crosstab.shape == (2, 2):
-                oddsratio, pval = fisher_exact(crosstab)
-                st.write(f"Fisher's exact test statistic: {oddsratio}, p-value: {pval}")
-            elif np.any(exp_freq < 5):
-                st.write("<p style='color: red;'>Warning:</p> chi-square test may be invalid due to expected frequency less than 5", unsafe_allow_html=True)
-                st.write(f"Chi-square test statistic: {chi2}, p-value: {pval}")
-            else:
-                st.write(f"Chi-square test statistic: {chi2}, p-value: {pval}")
+   # Perform pairwise cross-tabulations and display results
+st.header("Cross-tabulations")
+tabs_list = []
+for i, col1 in enumerate(selected_cols):
+    for col2 in selected_cols[i+1:]:
+        crosstab = pd.crosstab(data[col1], data[col2])
+        tabs_list.append((col1, col2))
+        st.write(f"<a id='{col1}{col2}'></a>", unsafe_allow_html=True)
+        st.write(f"Cross-tabulation of {col1} and {col2}")
+        st.write(crosstab)
+        chi2, pval, dof, exp_freq = chi2_contingency(crosstab)
+        if crosstab.shape == (2, 2) and not np.any(exp_freq < 5):
+            st.write(f"Chi-square test statistic: {round(chi2, 4)}, p-value: {round(pval, 4)}")
+        elif crosstab.shape == (2, 2):
+            oddsratio, pval = fisher_exact(crosstab)
+            st.write(f"Fisher's exact test statistic: {round(oddsratio, 4)}, p-value: {round(pval, 4)}")
+        elif np.any(exp_freq < 5):
+            st.write("<p style='color: red;'>Warning:</p> chi-square test may be invalid due to expected frequency less than 5", unsafe_allow_html=True)
+            st.write(f"Chi-square test statistic: {round(chi2, 4)}, p-value: {round(pval, 4)}")
+        else:
+            st.write(f"Chi-square test statistic: {round(chi2, 4)}, p-value: {round(pval, 4)}")
+
 
     st.sidebar.header("Cross-tabulations")
     for tab in tabs_list:
