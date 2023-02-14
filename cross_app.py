@@ -49,7 +49,6 @@ if file is not None:
             else:
                 st.write(f"Chi-square test statistic: {round(chi2, 4)}, p-value: {round(pval, 4)}")
 
-
 st.sidebar.header("Cross-tabulations")
 for tab in tabs_list:
     st.sidebar.write(f"[{tab[0]} x {tab[1]}](#{tab[0]}{tab[1]})")
