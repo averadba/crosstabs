@@ -34,10 +34,12 @@ if file is not None:
         for col2 in selected_cols[i+1:]:
             crosstab = pd.crosstab(data[col1], data[col2])
             exp_freq = chi2_contingency(crosstab)[3]
-            tabs_list.append((col1, col2))
-            st.write(f"<a id='{col1}{col2}'></a>", unsafe_allow_html=True)
-            st.write(f"Cross-tabulation of {col1} and {col2}")
-            st.write(pd.concat([crosstab, pd.DataFrame(exp_freq, index=crosstab.index, columns=crosstab.columns, prefix='Expected_')], axis=1))
+            if crosstab.shape == exp_freq.shape:
+                st.write(f"<a id='{col1}{col2}'></a>", unsafe_allow_html=True)
+                st.write(f"Cross-tabulation of {col1} and {col2}")
+                st.write(pd.concat([crosstab, pd.DataFrame(exp_freq, index=crosstab.index, columns=crosstab.columns, prefix='Expected_')], axis=1))
+            else:
+                raise ValueError("Dimensions of crosstab and exp_freq do not match")
             chi2, pval, dof, _ = chi2_contingency(crosstab)
             if crosstab.shape == (2, 2):
                 oddsratio, pval = fisher_exact(crosstab)
@@ -47,7 +49,8 @@ if file is not None:
                 st.write(f"Chi-square test statistic: {chi2}, p-value: {pval}")
             else:
                 st.write(f"Chi-square test statistic: {chi2}, p-value: {pval}")
+            tabs_list.append((col1, col2))
 
     st.sidebar.header("Cross-tabulations")
     for tab in tabs_list:
-        st.sidebar.write(f"[{tab[0]} x {tab[1]}](#{tab[0]}{tab[1]})")
+        st.sidebar.write(f"{tab[0]} x {tab[1]}")
