@@ -30,26 +30,33 @@ if file is not None:
    # Perform pairwise cross-tabulations and display results
     st.header("Cross-tabulations")
     tabs_list = []
+    significant_tabs = []
     for i, col1 in enumerate(selected_cols):
         for col2 in selected_cols[i+1:]:
             crosstab = pd.crosstab(data[col1], data[col2])
             tabs_list.append((col1, col2))
             st.write(f"<a id='{col1}{col2}'></a>", unsafe_allow_html=True)
             st.write(f"Cross-tabulation of {col1} and {col2}")
-            st.write(crosstab)
-            chi2, pval, dof, exp_freq = chi2_contingency(crosstab)
-            if crosstab.shape == (2, 2) and not np.any(exp_freq < 5):
-                st.write(f"Chi-square test statistic: {round(chi2, 4)}, p-value: {round(pval, 4)}")
-            elif crosstab.shape == (2, 2):
+            if crosstab.shape == (2, 2) and not np.any(crosstab < 5):
                 oddsratio, pval = fisher_exact(crosstab)
                 st.write(f"Fisher's exact test statistic: {round(oddsratio, 4)}, p-value: {round(pval, 4)}")
-            elif np.any(exp_freq < 5):
-                st.write("<p style='color: red;'>Warning:</p> chi-square test may be invalid due to expected frequency less than 5", unsafe_allow_html=True)
-                st.write(f"Chi-square test statistic: {round(chi2, 4)}, p-value: {round(pval, 4)}")
+                if pval < 0.05:
+                    significant_tabs.append((col1, col2))
             else:
+                chi2, pval, dof, exp_freq = chi2_contingency(crosstab)
                 st.write(f"Chi-square test statistic: {round(chi2, 4)}, p-value: {round(pval, 4)}")
+                if pval < 0.05:
+                    significant_tabs.append((col1, col2))
 
-
-st.sidebar.header("Cross-tabulations")
-for tab in tabs_list:
-    st.sidebar.write(f"[{tab[0]} x {tab[1]}](#{tab[0]}{tab[1]})")
+    # Display cross-tabs and significant cross-tabs in the sidebar
+    tabs_container = st.sidebar.beta_container()
+    tabs_container.write("## Cross-tabs")
+    with tabs_container:
+        tabs_list_elem = []
+        for idx, (col1, col2) in enumerate(tabs_list):
+            if (col1, col2) in significant_tabs or (col2, col1) in significant_tabs:
+                tag = "**(significant)**"
+            else:
+                tag = ""
+            tabs_list_elem.append(f"{idx + 1}. [{col1} x {col2}]{tag}")
+        st.sidebar.write("\n".join(tabs_list_elem))
