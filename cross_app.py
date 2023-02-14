@@ -3,6 +3,13 @@ import pandas as pd
 from scipy.stats import chi2_contingency, fisher_exact
 import numpy as np
 
+st.markdown(""" <style>
+#MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+</style> """, unsafe_allow_html=True)
+
+st.set_option('deprecation.showPyplotGlobalUse', False)
+
 # Create a Streamlit interface for file upload and variable selection
 st.title("Categorical Variable Analysis")
 
